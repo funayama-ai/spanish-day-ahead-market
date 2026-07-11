@@ -6,6 +6,16 @@ The application retrieves OMIE `MARGINALPDBC` files, converts the market data in
 
 ---
 
+## Repository
+
+Public GitHub repository:
+
+```text
+https://github.com/funayama-ai/spanish-day-ahead-market
+```
+
+---
+
 ## 1. Project Objective
 
 The objective of this project is to build a reproducible end-to-end data pipeline for Spanish Day-Ahead electricity-auction prices.
@@ -108,6 +118,7 @@ This allows the stored data to be compared consistently with other European elec
 - Complete 15-minute price table
 - Unit tests
 - REST API integration tests
+- Public GitHub repository
 
 ---
 
@@ -123,6 +134,7 @@ SpanishDayAhead/
 │   └── SpanishDayAhead.Web/
 ├── tests/
 │   └── SpanishDayAhead.Tests/
+├── .gitignore
 ├── dotnet-tools.json
 ├── README.md
 └── SpanishDayAhead.slnx
@@ -391,6 +403,8 @@ The database schema is managed with Entity Framework Core migrations.
 
 The database remains available after the API process is stopped and restarted.
 
+Database files are excluded from the public Git repository through `.gitignore`.
+
 ---
 
 ## 10. Duplicate Prevention
@@ -638,6 +652,8 @@ https://localhost:7086/
 
 as the REST API base address.
 
+No password, API token, or private key is required for the public OMIE download workflow.
+
 ---
 
 ## 16. Prerequisites
@@ -645,6 +661,7 @@ as the REST API base address.
 Required software:
 
 - .NET 10 SDK
+- Git
 - Visual Studio Code or Visual Studio
 - Internet access for OMIE downloads
 - trusted local ASP.NET Core HTTPS certificate
@@ -655,6 +672,12 @@ Check the installed .NET version:
 dotnet --version
 ```
 
+Check the installed Git version:
+
+```cmd
+git --version
+```
+
 Trust the local development certificate when required:
 
 ```cmd
@@ -663,13 +686,25 @@ dotnet dev-certs https --trust
 
 ---
 
-## 17. Restore and Build
+## 17. Clone the Repository
 
-Run all commands from the solution root:
+Clone the public GitHub repository:
 
-```text
-C:\Users\USER\Documents\SpanishDayAhead
+```cmd
+git clone https://github.com/funayama-ai/spanish-day-ahead-market.git
 ```
+
+Enter the project folder:
+
+```cmd
+cd spanish-day-ahead-market
+```
+
+---
+
+## 18. Restore and Build
+
+Run all commands from the solution root.
 
 Restore dependencies:
 
@@ -691,7 +726,7 @@ Build succeeded
 
 ---
 
-## 18. Run the API and Quartz Scheduler
+## 19. Run the API and Quartz Scheduler
 
 Open the first terminal and run:
 
@@ -711,7 +746,7 @@ The API process also starts the Quartz.NET scheduler.
 
 ---
 
-## 19. Run the Blazor Web Application
+## 20. Run the Blazor Web Application
 
 Open a second terminal and run:
 
@@ -735,7 +770,7 @@ Both applications must be running for the dashboard to retrieve data through the
 
 ---
 
-## 20. Stop the Applications
+## 21. Stop the Applications
 
 In the Web terminal, press:
 
@@ -757,7 +792,7 @@ Scheduler QuartzScheduler_$_NON_CLUSTERED Shutdown complete.
 
 ---
 
-## 21. Manual API Testing
+## 22. Manual API Testing
 
 Manual API requests are stored in:
 
@@ -781,7 +816,7 @@ link above each HTTP request.
 
 ---
 
-## 22. Automated Tests
+## 23. Automated Tests
 
 Run the complete test suite with:
 
@@ -844,7 +879,7 @@ The integration tests do not require ports `7086` or `7289` to be running.
 
 ---
 
-## 23. Verified Demonstration
+## 24. Verified Demonstration
 
 The application was live-tested using:
 
@@ -878,7 +913,7 @@ The real OMIE data was successfully:
 
 ---
 
-## 24. Observed Price Profile
+## 25. Observed Price Profile
 
 The verified delivery-day profile shows:
 
@@ -893,7 +928,7 @@ The 15-minute resolution reveals short-term market-price movements that would be
 
 ---
 
-## 25. Logging
+## 26. Logging
 
 The application produces logs for:
 
@@ -924,7 +959,7 @@ Returning 96 Day-Ahead prices for 07/11/2026.
 
 ---
 
-## 26. Restart Behaviour
+## 27. Restart Behaviour
 
 The SQLite database persists when the API application stops.
 
@@ -938,7 +973,33 @@ Historical missed-run backfilling is not currently implemented.
 
 ---
 
-## 27. Assumptions
+## 28. Git and Repository Hygiene
+
+The repository contains a root `.gitignore`.
+
+The following generated or local files are excluded:
+
+- `bin`;
+- `obj`;
+- `.vs`;
+- SQLite database files;
+- test-result files;
+- local secret files;
+- logs;
+- ZIP archives;
+- temporary submission folders.
+
+The public repository contains source code and documentation, but does not contain the locally generated SQLite database.
+
+Repository URL:
+
+```text
+https://github.com/funayama-ai/spanish-day-ahead-market
+```
+
+---
+
+## 29. Assumptions
 
 The current implementation assumes that:
 
@@ -952,7 +1013,7 @@ The current implementation assumes that:
 
 ---
 
-## 28. Current Limitations
+## 30. Current Limitations
 
 - Historical missed-run backfilling is not implemented.
 - Public-cloud deployment is outside the current scope.
@@ -961,11 +1022,10 @@ The current implementation assumes that:
 - The project currently focuses on the Spanish bidding zone.
 - Long-term historical analytics are not implemented.
 - Automated browser-interface tests are not included.
-- A public GitHub repository has not yet been published.
 
 ---
 
-## 29. Possible Future Improvements
+## 31. Possible Future Improvements
 
 Potential future work includes:
 
@@ -986,7 +1046,7 @@ Potential future work includes:
 
 ---
 
-## 30. Technology Stack
+## 32. Technology Stack
 
 - .NET 10
 - C#
@@ -999,12 +1059,14 @@ Potential future work includes:
 - `HttpClient`
 - xUnit
 - `Microsoft.AspNetCore.Mvc.Testing`
+- Git
+- GitHub
 - Visual Studio Code
 - VS Code REST Client
 
 ---
 
-## 31. AI-Assisted Development Disclosure
+## 33. AI-Assisted Development Disclosure
 
 AI assistance was used during the development process for:
 
@@ -1024,11 +1086,12 @@ The final verified application result is based on:
 - live OMIE data retrieval;
 - SQLite database verification;
 - manual REST API testing;
-- manual Blazor dashboard testing.
+- manual Blazor dashboard testing;
+- successful publication to GitHub.
 
 ---
 
-## 32. Current Project Status
+## 34. Current Project Status
 
 The core application functionality is complete.
 
@@ -1053,7 +1116,9 @@ Completed:
 - unit tests;
 - REST API integration tests;
 - complete README documentation;
-- clean source-code submission package.
+- clean source-code submission package;
+- Git repository initialization;
+- public GitHub repository publication.
 
 Current verified test result:
 
@@ -1062,8 +1127,14 @@ Current verified test result:
 0 failed
 ```
 
+Public repository:
+
+```text
+https://github.com/funayama-ai/spanish-day-ahead-market
+```
+
 Remaining optional work:
 
-- public GitHub repository;
 - production deployment;
-- historical missed-run backfill.
+- historical missed-run backfill;
+- extended historical analytics.
