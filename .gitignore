@@ -1,0 +1,68 @@
+# .NET build output
+**/bin/
+**/obj/
+artifacts/
+[Bb]uild/
+[Dd]ebug/
+[Rr]elease/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# JetBrains
+.idea/
+*.sln.iml
+
+# Test results and coverage
+TestResults/
+*.trx
+coverage/
+coverage.*
+*.coverage
+*.coveragexml
+
+# NuGet generated files
+*.nupkg
+*.snupkg
+packages/
+.nuget/
+
+# SQLite database files
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+
+# Local configuration and secrets
+.env
+.env.*
+appsettings.Local.json
+appsettings.*.Local.json
+secrets.json
+
+# Logs
+*.log
+logs/
+
+# Temporary and operating-system files
+*.tmp
+*.temp
+*.bak
+*.swp
+*~
+Thumbs.db
+.DS_Store
+
+# Generated submission files
+SpanishDayAhead_Submission/
+SpanishDayAhead_Verify/
+*.zip

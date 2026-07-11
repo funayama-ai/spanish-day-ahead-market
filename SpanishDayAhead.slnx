@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/SpanishDayAhead.Api/SpanishDayAhead.Api.csproj" />
+    <Project Path="src/SpanishDayAhead.Application/SpanishDayAhead.Application.csproj" />
+    <Project Path="src/SpanishDayAhead.Domain/SpanishDayAhead.Domain.csproj" />
+    <Project Path="src/SpanishDayAhead.Infrastructure/SpanishDayAhead.Infrastructure.csproj" />
+    <Project Path="src/SpanishDayAhead.Web/SpanishDayAhead.Web.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/SpanishDayAhead.Tests/SpanishDayAhead.Tests.csproj" />
+  </Folder>
+</Solution>

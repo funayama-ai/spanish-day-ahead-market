@@ -1,0 +1,17 @@
+@SpanishDayAhead_Api_HostAddress = https://localhost:7086
+
+### Get Spanish Day-Ahead prices as JSON
+GET {{SpanishDayAhead_Api_HostAddress}}/api/day-ahead-prices?deliveryDate=2026-07-11
+Accept: application/json
+
+###
+
+### Get Spanish Day-Ahead prices as semicolon-separated text
+GET {{SpanishDayAhead_Api_HostAddress}}/api/day-ahead-prices?deliveryDate=2026-07-11
+Accept: text/plain
+
+###
+
+### Test a date with no stored prices
+GET {{SpanishDayAhead_Api_HostAddress}}/api/day-ahead-prices?deliveryDate=2026-07-12
+Accept: application/json
