@@ -2,7 +2,7 @@
 
 ### Get Spanish Day-Ahead prices as JSON
 GET {{SpanishDayAhead_Api_HostAddress}}/api/day-ahead-prices?deliveryDate=2026-07-11
-Accept: application/json
+Accept: application/jsonS
 
 ###
 
@@ -14,4 +14,4 @@ Accept: text/plain
 
 ### Test a date with no stored prices
 GET {{SpanishDayAhead_Api_HostAddress}}/api/day-ahead-prices?deliveryDate=2026-07-12
-Accept: application/json
+Accept: application/jsonSS
