@@ -103,6 +103,7 @@ This allows the stored data to be compared consistently with other European elec
 - SQLite persistence
 - Entity Framework Core
 - Database migrations
+- Automatic EF Core migration at API startup
 - Duplicate prevention
 - OMIE source-file revision handling
 - Quartz.NET scheduled imports
@@ -125,7 +126,7 @@ This allows the stored data to be compared consistently with other European elec
 ## 4. Solution Structure
 
 ```text
-SpanishDayAhead/
+spanish-day-ahead-market/
 ├── src/
 │   ├── SpanishDayAhead.Api/
 │   ├── SpanishDayAhead.Application/
@@ -193,6 +194,7 @@ Contains:
 - Quartz schedule configuration;
 - dependency-injection registration;
 - SQLite configuration;
+- automatic EF Core migration execution before Quartz.NET starts;
 - OMIE downloader configuration;
 - application logging;
 - OpenAPI support.
@@ -401,9 +403,45 @@ The `DayAheadPrices` table stores:
 
 The database schema is managed with Entity Framework Core migrations.
 
+### 9.1 Automatic database migration at API startup
+
+The API applies all pending Entity Framework Core migrations before Quartz.NET and the HTTP application begin using the database.
+
+On a clean clone or after the local SQLite database has been deleted, the first API startup automatically:
+
+1. creates the SQLite database file;
+2. creates the Entity Framework Core migration-history table;
+3. applies the `20260710165436_InitialCreate` migration;
+4. creates the `DayAheadPrices` table and indexes; and
+5. starts the scheduled OMIE import only after migration completion.
+
+Expected startup log:
+
+```text
+Applying pending database migrations.
+Applying migration '20260710165436_InitialCreate'.
+Database migrations applied successfully.
+```
+
+A manual database update is not required for normal setup:
+
+```cmd
+dotnet ef database update
+```
+
+The command above remains useful for diagnostics, but another user should be able to clone the repository and create the database simply by starting the API.
+
 The database remains available after the API process is stopped and restarted.
 
-Database files are excluded from the public Git repository through `.gitignore`.
+Generated SQLite files are excluded from the public Git repository through `.gitignore`:
+
+```text
+*.db
+*.db-shm
+*.db-wal
+```
+
+The migration source files remain in Git so the schema can be reproduced on another computer.
 
 ---
 
@@ -724,6 +762,41 @@ Expected result:
 Build succeeded
 ```
 
+Run the complete test suite:
+
+```cmd
+dotnet test
+```
+
+Expected verified result:
+
+```text
+Total:     22
+Succeeded: 22
+Failed:    0
+Skipped:   0
+```
+
+### 18.1 Clean-clone reproduction check
+
+A clean-clone check should be performed from a newly cloned repository with no generated SQLite database file.
+
+From the repository root:
+
+```cmd
+dotnet restore
+dotnet build
+dotnet test
+```
+
+Confirm that the following file does not exist before the first API startup:
+
+```text
+src/SpanishDayAhead.Api/Data/spanish-day-ahead.db
+```
+
+No manual `dotnet ef database update` command should be required.
+
 ---
 
 ## 19. Run the API and Quartz Scheduler
@@ -741,6 +814,43 @@ https://localhost:7086
 ```
 
 Keep this terminal running.
+
+At startup, the API first applies pending EF Core migrations. Quartz.NET starts only after database migration has completed successfully.
+
+Expected clean-start sequence:
+
+```text
+Applying pending database migrations.
+Applying migration '20260710165436_InitialCreate'.
+Database migrations applied successfully.
+Scheduler QuartzScheduler_$_NON_CLUSTERED started.
+```
+
+On the first successful import into an empty database, the result should be approximately:
+
+```text
+parsed: 96
+inserted: 96
+updated: 0
+ignored: 0
+```
+
+On a later import of the unchanged revision, duplicate prevention should produce:
+
+```text
+parsed: 96
+inserted: 0
+updated: 0
+ignored: 96
+```
+
+A `404 Not Found` response for a later OMIE revision is expected when that revision has not yet been published. In that case, revision checking stops normally.
+
+The following error must not appear after a successful clean startup:
+
+```text
+SQLite Error 1: 'no such table: DayAheadPrices'
+```
 
 The API process also starts the Quartz.NET scheduler.
 
@@ -967,6 +1077,7 @@ After the API restarts:
 
 - stored Day-Ahead records remain available;
 - the REST API can return the saved data;
+- pending EF Core migrations are checked automatically;
 - Quartz.NET starts again automatically.
 
 Historical missed-run backfilling is not currently implemented.
@@ -989,7 +1100,7 @@ The following generated or local files are excluded:
 - ZIP archives;
 - temporary submission folders.
 
-The public repository contains source code and documentation, but does not contain the locally generated SQLite database.
+The public repository contains source code, EF Core migration source files, and documentation, but does not contain the locally generated SQLite database.
 
 Repository URL:
 
@@ -1085,6 +1196,7 @@ The final verified application result is based on:
 - 22 passing automated tests;
 - live OMIE data retrieval;
 - SQLite database verification;
+- successful automatic migration from an empty database;
 - manual REST API testing;
 - manual Blazor dashboard testing;
 - successful publication to GitHub.
@@ -1105,6 +1217,8 @@ Completed:
 - UTC conversion;
 - Day-Ahead import service;
 - SQLite persistence;
+- automatic EF Core migration at API startup;
+- clean empty-database startup verification;
 - duplicate prevention;
 - OMIE revision handling;
 - Quartz.NET scheduling;
@@ -1125,6 +1239,14 @@ Current verified test result:
 ```text
 22 passed
 0 failed
+```
+
+Current verified clean-start result:
+
+```text
+Automatic migration: succeeded
+Initial OMIE import: 96 inserted
+Duplicate re-import: 96 ignored
 ```
 
 Public repository:
