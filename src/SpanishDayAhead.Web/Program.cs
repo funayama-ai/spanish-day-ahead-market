@@ -1,14 +1,21 @@
 using SpanishDayAhead.Web.Components;
 using SpanishDayAhead.Web.Services;
 
-var builder = WebApplication.CreateBuilder(args);
+var builder =
+    WebApplication.CreateBuilder(args);
 
-// Add services for the Blazor Server application.
+// ---------------------------------------------------------
+// Blazor Server services
+// ---------------------------------------------------------
+
 builder.Services
     .AddRazorComponents()
     .AddInteractiveServerComponents();
 
-// Read the REST API base URL from appsettings.json.
+// ---------------------------------------------------------
+// REST API client configuration
+// ---------------------------------------------------------
+
 var apiBaseUrl =
     builder.Configuration["Api:BaseUrl"]
     ?? throw new InvalidOperationException(
@@ -21,24 +28,37 @@ if (!Uri.TryCreate(
         out var apiBaseAddress))
 {
     throw new InvalidOperationException(
-        $"The configured API base URL '{apiBaseUrl}' is invalid.");
+        $"The configured API base URL " +
+        $"'{apiBaseUrl}' is invalid.");
 }
 
-// Register the named HttpClient used by DayAheadPriceApiClient.
+// Register the named HttpClient used by the Blazor frontend.
 builder.Services.AddHttpClient(
     DayAheadPriceApiClient.HttpClientName,
     client =>
     {
-        client.BaseAddress = apiBaseAddress;
-        client.Timeout = TimeSpan.FromSeconds(30);
+        client.BaseAddress =
+            apiBaseAddress;
+
+        client.Timeout =
+            TimeSpan.FromSeconds(30);
     });
 
 // Register the frontend REST API client.
-builder.Services.AddScoped<DayAheadPriceApiClient>();
+builder.Services.AddScoped<
+    DayAheadPriceApiClient>();
 
-var app = builder.Build();
+// ---------------------------------------------------------
+// Build the Web application
+// ---------------------------------------------------------
 
-// Configure the HTTP request pipeline.
+var app =
+    builder.Build();
+
+// ---------------------------------------------------------
+// Configure the HTTP request pipeline
+// ---------------------------------------------------------
+
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler(

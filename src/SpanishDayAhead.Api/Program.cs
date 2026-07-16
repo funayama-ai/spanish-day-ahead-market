@@ -221,8 +221,54 @@ builder.Services.AddQuartzHostedService(
 var app =
     builder.Build();
 
+// ---------------------------------------------------------
+// Apply EF Core migrations before Quartz and the HTTP
+// application begin using the database.
+// ---------------------------------------------------------
+
+await using (var scope =
+    app.Services.CreateAsyncScope())
+{
+    var serviceProvider =
+        scope.ServiceProvider;
+
+    var logger =
+        serviceProvider
+            .GetRequiredService<ILoggerFactory>()
+            .CreateLogger(
+                "DatabaseMigration");
+
+    try
+    {
+        logger.LogInformation(
+            "Applying pending database migrations.");
+
+        var dbContext =
+            serviceProvider
+                .GetRequiredService<
+                    SpanishDayAheadDbContext>();
+
+        await dbContext.Database
+            .MigrateAsync();
+
+        logger.LogInformation(
+            "Database migrations applied successfully.");
+    }
+    catch (Exception exception)
+    {
+        logger.LogCritical(
+            exception,
+            "Database migration failed during application startup.");
+
+        throw;
+    }
+}
+
 // Enable OpenAPI only in the development environment.
 if (app.Environment.IsDevelopment())
+{
+    app.MapOpenApi();
+}
 {
     app.MapOpenApi();
 }
